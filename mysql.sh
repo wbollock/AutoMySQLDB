@@ -13,6 +13,7 @@
 if [ -e /home/$USER/noob ]
 then
 # create random password
+# TODO: CHANGE THIS to something without special characters
     PASSWDDB="$(openssl rand -base64 12)"
     #uncomment this for a random password
     #PASSWDDB=welcome123
@@ -37,15 +38,18 @@ then
         #echo "Please enter root user MySQL password!"
         #echo "Note: password will be hidden when typing"
         #read -sp rootpasswd
-        mysql -uroot -p${rootpasswd} -e "CREATE DATABASE ${MAINDB} /*\!40100 DEFAULT CHARACTER SET utf8 */;"
-        mysql -uroot -p${rootpasswd} -e "CREATE USER ${MAINDB}@localhost IDENTIFIED BY '${PASSWDDB}';"
-        mysql -uroot -p${rootpasswd} -e "GRANT ALL PRIVILEGES ON ${MAINDB}.* TO '${MAINDB}'@'localhost';"
-        mysql -uroot -p${rootpasswd} -e "FLUSH PRIVILEGES;"
+        # TODO: supress password on command line warnings
+        mysql -uroot -p${rootpasswd} -e "CREATE DATABASE ${MAINDB} /*\!40100 DEFAULT CHARACTER SET utf8 */;" 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
+        mysql -uroot -p${rootpasswd} -e "CREATE USER ${MAINDB}@localhost IDENTIFIED BY '${PASSWDDB}';" 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
+        mysql -uroot -p${rootpasswd} -e "GRANT ALL PRIVILEGES ON ${MAINDB}.* TO '${MAINDB}'@'localhost';" 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
+        mysql -uroot -p${rootpasswd} -e "FLUSH PRIVILEGES;" 2>/dev/null | grep -v "mysql: [Warning] Using a password on the command line interface can be insecure."
     fi
+
+echo $MAINDB > /home/$USER/mysqlInfo
+echo $PASSWDDB >> /home/$USER/mysqlInfo
 # remove flag file for first login
 rm -f /home/$USER/noob
 fi
 
 # create file for user
-echo $MAINDB > /home/$USER/mysqlInfo
-echo $PASSWDDB >> /home/$USER/mysqlInfo
+
