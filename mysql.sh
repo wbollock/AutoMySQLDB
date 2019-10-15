@@ -13,8 +13,8 @@
 if [ -e /home/$USER/noob ]
 then
 # create random password
-# TODO: CHANGE THIS to something without special characters
-    PASSWDDB="$(openssl rand -base64 12)"
+# TODO: CHANGE THIS to something without special character
+    PASSWDDB="$(< /dev/urandom tr -dc A-Za-z0-9 | head -c14)"
     #uncomment this for a random password
     #PASSWDDB=welcome123
     # replace "-" with "_" for database username
